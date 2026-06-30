@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     nitro: {
       openAPI: {
         meta: {
-          title: 'Nuxt Template API',
+          title: 'ZcaFlare API',
           version: packageJson.version,
         },
       },
@@ -79,7 +79,7 @@ export default defineNuxtConfig({
       },
       blob: {
         driver: 'cloudflare-r2',
-        bucketName: process.env.CLOUDFLARE_R2_BUCKET || 'nuxt-template-prod',
+        bucketName: process.env.CLOUDFLARE_R2_BUCKET || 'zcaflare-prod',
         binding: 'BLOB',
       },
     },
@@ -217,7 +217,7 @@ export default defineNuxtConfig({
     smtpPort: 1025,
     smtpUser: '',
     smtpPass: '',
-    smtpFrom: 'Nuxt Template <noreply@localhost>',
+    smtpFrom: 'ZcaFlare <noreply@zcaflare.dev>',
 
     sepayTransactionPrefix: '',
     sepayBankNumber: '',

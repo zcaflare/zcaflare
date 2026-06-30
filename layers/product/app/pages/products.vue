@@ -8,7 +8,7 @@ import { productsKey } from '#layers/product/app/composables/useProducts'
 import DashboardNavbar from '~/components/Dashboard/DashboardNavbar.vue'
 
 definePageMeta({ can: ['product:write', 'product:manage'] })
-useHead({ title: 'Products' })
+useHead({ title: 'Plans' })
 
 const api = useProductApi()
 const toast = useToast()
@@ -56,7 +56,7 @@ async function handleSubmit(values: CreateProduct | UpdateProduct) {
     }
     await refresh()
     modalOpen.value = false
-    toast.add({ title: isEdit ? 'Product updated' : 'Product created', color: 'success' })
+    toast.add({ title: isEdit ? 'Plan updated' : 'Plan created', color: 'success' })
   }
   catch (err: unknown) {
     const e = err as { data?: { statusMessage?: string } }
@@ -83,7 +83,7 @@ async function deleteProduct(id: string) {
 async function handleDelete(product: Product) {
   try {
     await deleteProduct(product.id)
-    toast.add({ title: 'Product deleted', color: 'success' })
+    toast.add({ title: 'Plan deleted', color: 'success' })
   }
   catch (err: unknown) {
     const e = err as { data?: { statusMessage?: string } }
@@ -95,9 +95,9 @@ async function handleDelete(product: Product) {
 <template>
   <UDashboardPanel id="products">
     <template #header>
-      <DashboardNavbar title="Products">
+      <DashboardNavbar title="Plans">
         <template #right>
-          <UButton icon="i-lucide-plus" label="New product" @click="openCreate()" />
+          <UButton icon="i-lucide-plus" label="New plan" @click="openCreate()" />
         </template>
       </DashboardNavbar>
     </template>
@@ -115,7 +115,7 @@ async function handleDelete(product: Product) {
 
   <UModal
     v-model:open="modalOpen"
-    :title="editingProduct ? 'Edit product' : 'New product'"
+    :title="editingProduct ? 'Edit plan' : 'New plan'"
     :ui="{ body: 'overflow-y-auto max-h-[80vh]' }"
   >
     <template #body>

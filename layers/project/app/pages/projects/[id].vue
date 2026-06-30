@@ -16,7 +16,7 @@ const id = route.params.id as string
 const { data: project, error, refresh } = useAsyncData<ProjectDetail>(`project-${id}`, () => api.fetchProject(id))
 whenError(error)
 
-useHead(() => ({ title: project.value?.name ?? 'Project' }))
+useHead(() => ({ title: project.value?.name ?? 'Workspace' }))
 
 const ability = useAbility()
 const { session } = useAuth()
@@ -117,7 +117,7 @@ async function removeMember(userId: string) {
 <template>
   <UDashboardPanel id="project-detail">
     <template #header>
-      <DashboardNavbar :title="project?.name ?? 'Project'">
+      <DashboardNavbar :title="project?.name ?? 'Workspace'">
         <template #leading>
           <UButton icon="i-lucide-arrow-left" color="neutral" variant="ghost" to="/projects" />
         </template>
@@ -142,11 +142,11 @@ async function removeMember(userId: string) {
 
         <div>
           <h2 class="font-semibold mb-3">
-            Products ({{ project.products.length }})
+            Plans ({{ project.products.length }})
           </h2>
 
           <div v-if="project.products.length === 0" class="text-sm text-muted mb-3">
-            No products linked.
+            No plans linked.
           </div>
 
           <div v-else class="space-y-2 mb-3">
@@ -168,11 +168,11 @@ async function removeMember(userId: string) {
           </div>
 
           <div v-if="canManageProject && availableProducts.length > 0" class="flex items-end gap-2">
-            <UFormField label="Add product" class="flex-1">
+            <UFormField label="Add plan" class="flex-1">
               <USelect
                 v-model="addProductId"
                 :items="availableProducts.map(p => ({ label: p.name, value: p.id }))"
-                placeholder="Select a product"
+                placeholder="Select a plan"
                 class="w-full"
               />
             </UFormField>

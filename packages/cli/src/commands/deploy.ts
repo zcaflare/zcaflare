@@ -8,7 +8,7 @@ import { ghAuthStatus, setSecret, setVariable } from '../lib/github'
 import { generateSecret } from '../lib/keys'
 import { run } from '../lib/run'
 
-const WORKER_NAME = 'nuxt-template'
+const WORKER_NAME = 'zcaflare'
 
 const setup = defineCommand({
   meta: { name: 'setup', description: 'Provision CF resources + sync GitHub config + push Worker secrets' },

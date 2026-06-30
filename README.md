@@ -1,4 +1,4 @@
-# Nuxt Template — agent-driven workspace
+# ZcaFlare — Zalo Webhook as a service
 
 [![CI](https://github.com/thecodeorigin/nuxt-template/actions/workflows/ci.yml/badge.svg)](https://github.com/thecodeorigin/nuxt-template/actions/workflows/ci.yml)
 [![Production](https://github.com/thecodeorigin/nuxt-template/actions/workflows/production.yml/badge.svg)](https://github.com/thecodeorigin/nuxt-template/actions/workflows/production.yml)
@@ -8,10 +8,11 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
 ![pnpm](https://img.shields.io/badge/pnpm-workspace-F69220?logo=pnpm&logoColor=white)
 
-A Nuxt 4 + NuxtHub starter on a **full Cloudflare stack** (D1 SQLite · KV · R2
-· Workers) with **GitHub Actions deploys** and a **Claude Code agent setup**
-baked in. PR → Cloudflare Workers preview. Merge to `main` → production ships.
-D1 migrations apply during each build.
+ZcaFlare is Zalo Webhook as a service — a personal Zalo integration for
+developers. Built on a **full Cloudflare stack** (D1 SQLite · KV · R2 ·
+Workers) with **GitHub Actions deploys** baked in. PR → Cloudflare Workers
+preview. Merge to `main` → production ships. D1 migrations apply during each
+build.
 
 > Deep version (conventions, layer ownership, hard rules):
 > [`CLAUDE.md`](./CLAUDE.md). CLI reference: [`packages/cli/README.md`](./packages/cli/README.md).

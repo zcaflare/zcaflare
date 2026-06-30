@@ -2,8 +2,8 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: 'Nuxt Template Documentation',
-  description: 'AI-Native Nuxt template that scales',
+  title: 'ZcaFlare Documentation',
+  description: 'Zalo Webhook as a service',
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [

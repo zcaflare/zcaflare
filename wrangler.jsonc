@@ -16,7 +16,7 @@
   // `wrangler secret bulk` post-deploy — see that workflow for the preview
   // inventory.
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "nuxt-template",
+  "name": "zcaflare",
   "compatibility_date": "2025-02-11",
   "compatibility_flags": [
     "nodejs_compat"
@@ -52,7 +52,7 @@
   // (server/utils/url.ts getBaseUrl(event)), so NUXT_PUBLIC_BASE_DOMAIN is
   // only used by non-request contexts (e.g. cron-generated email links).
   "vars": {
-    "NUXT_PUBLIC_BASE_DOMAIN": "template.thecodeorigin.com",
+    "NUXT_PUBLIC_BASE_DOMAIN": "zcaflare.dev",
     "NUXT_PUBLIC_SSL_ENABLED": "true"
   }
 }

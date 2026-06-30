@@ -39,7 +39,7 @@ function onSubmit(event: FormSubmitEvent<Schema>) {
 <template>
   <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
     <UFormField label="Name" name="name" required>
-      <UInput v-model="state.name" placeholder="Project name" class="w-full" />
+      <UInput v-model="state.name" placeholder="Workspace name" class="w-full" />
     </UFormField>
 
     <UFormField label="Description" name="description">

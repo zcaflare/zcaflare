@@ -194,7 +194,7 @@ const stopItems = computed<DropdownMenuItem[][]>(() => [[
       data-testid="brand-mark"
     >
       <UIcon name="i-lucide-cuboid" class="size-5 text-primary" />
-      <span v-if="!collapsed" class="font-semibold text-highlighted">Nuxt Template</span>
+      <span v-if="!collapsed" class="font-semibold text-highlighted">ZcaFlare</span>
     </div>
   </div>
 
@@ -204,6 +204,6 @@ const stopItems = computed<DropdownMenuItem[][]>(() => [[
     data-testid="brand-mark"
   >
     <UIcon name="i-lucide-cuboid" class="size-5 text-primary" />
-    <span v-if="!collapsed" class="font-semibold text-highlighted">Nuxt Template</span>
+    <span v-if="!collapsed" class="font-semibold text-highlighted">ZcaFlare</span>
   </div>
 </template>

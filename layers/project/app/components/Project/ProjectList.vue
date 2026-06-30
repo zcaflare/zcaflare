@@ -18,7 +18,7 @@ const emit = defineEmits<{ edit: [Project], delete: [Project] }>()
 
     <div v-else-if="projects.length === 0" class="text-center py-12 text-muted">
       <UIcon name="i-lucide-folder-kanban" class="size-10 mx-auto mb-3 opacity-40" />
-      <p>No projects yet</p>
+      <p>No workspaces yet</p>
     </div>
 
     <div v-else class="space-y-3">

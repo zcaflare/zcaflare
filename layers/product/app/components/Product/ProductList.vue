@@ -18,7 +18,7 @@ const emit = defineEmits<{ edit: [Product], delete: [Product] }>()
 
     <div v-else-if="products.length === 0" class="text-center py-12 text-muted">
       <UIcon name="i-lucide-package" class="size-10 mx-auto mb-3 opacity-40" />
-      <p>No products yet</p>
+      <p>No plans yet</p>
     </div>
 
     <div v-else class="space-y-3">
