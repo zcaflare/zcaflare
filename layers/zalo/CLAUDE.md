@@ -51,7 +51,5 @@
 
 - The bounce login is proxied **synchronously** with a 25s timeout. If a
   *successful* login is observed to be slow, move it to an async/job pattern.
-- Bounce `status` string values are inferred — verify `phaseFromBounceStatus`
-  against a live success.
 - Encryption key is derived from `authSecret`; rotating `authSecret` makes
   stored secrets undecryptable (shared codebase tradeoff).
