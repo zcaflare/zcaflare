@@ -79,8 +79,8 @@ catalogs:
       specifier: ^8.21.3
       version: 8.21.3
     '@thecodeorigin/auth':
-      specifier: 0.0.2
-      version: 0.0.2
+      specifier: 0.0.4
+      version: 0.0.4
     '@tiptap/core':
       specifier: ^3.22.4
       version: 3.22.4
@@ -307,7 +307,7 @@ importers:
         version: 8.21.3(vue@3.5.32(typescript@6.0.2))
       '@thecodeorigin/auth':
         specifier: 'catalog:'
-        version: 0.0.2(magicast@0.5.2)(vue@3.5.32(typescript@6.0.2))
+        version: 0.0.4(magicast@0.5.2)(vue@3.5.32(typescript@6.0.2))
       '@tiptap/core':
         specifier: 'catalog:'
         version: 3.22.4(@tiptap/pm@3.22.4)
@@ -3430,8 +3430,8 @@ packages:
     peerDependencies:
       vue: ^2.7.0 || ^3.0.0
 
-  '@thecodeorigin/auth@0.0.2':
-    resolution: {integrity: sha512-tLknJWSfraW9eQpPt6UyrzEcHK2bUWyspUwr7IJI0Apali4ojl+IVwy/nIlfswedfAI97ZRkz6SPL3hiYpUx3w==}
+  '@thecodeorigin/auth@0.0.4':
+    resolution: {integrity: sha512-ugOnCLxRiHHI+beZSurXl6J7v88QtjPsf5w98BWYt9rPa01+UllZcmOPc4MRdwwB2a0e67tDFuvA3PnSB6YsWg==}
 
   '@tiptap/core@3.22.4':
     resolution: {integrity: sha512-vGIGm/HpqLg8EAAQXQ+koV+/S828OEpzocfWcPOwo1u2QUVf9dQG47Yy6JJ8zFFaJwfv4dBcOXli+7BrJwsxDQ==}
@@ -11927,7 +11927,7 @@ snapshots:
       '@tanstack/virtual-core': 3.14.0
       vue: 3.5.32(typescript@6.0.2)
 
-  '@thecodeorigin/auth@0.0.2(magicast@0.5.2)(vue@3.5.32(typescript@6.0.2))':
+  '@thecodeorigin/auth@0.0.4(magicast@0.5.2)(vue@3.5.32(typescript@6.0.2))':
     dependencies:
       '@casl/ability': 6.8.1
       '@casl/vue': 2.2.6(@casl/ability@6.8.1)(vue@3.5.32(typescript@6.0.2))

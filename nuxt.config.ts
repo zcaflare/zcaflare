@@ -217,7 +217,7 @@ export default defineNuxtConfig({
     smtpPort: 1025,
     smtpUser: '',
     smtpPass: '',
-    smtpFrom: 'ZcaFlare <noreply@zcaflare.dev>',
+    smtpFrom: 'ZcaFlare <noreply@zcaflare.thecodeorigin.com>',
 
     sepayTransactionPrefix: '',
     sepayBankNumber: '',
