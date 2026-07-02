@@ -16,7 +16,7 @@ const id = route.params.id as string
 const { data: project, error, refresh } = useAsyncData<ProjectDetail>(`project-${id}`, () => api.fetchProject(id))
 whenError(error)
 
-useHead(() => ({ title: project.value?.name ?? 'Workspace' }))
+useHead(() => ({ title: project.value?.name ?? 'Project' }))
 
 const ability = useAbility()
 const { session } = useAuth()
@@ -117,7 +117,7 @@ async function removeMember(userId: string) {
 <template>
   <UDashboardPanel id="project-detail">
     <template #header>
-      <DashboardNavbar :title="project?.name ?? 'Workspace'">
+      <DashboardNavbar :title="project?.name ?? 'Project'">
         <template #leading>
           <UButton icon="i-lucide-arrow-left" color="neutral" variant="ghost" to="/projects" />
         </template>

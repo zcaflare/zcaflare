@@ -426,6 +426,9 @@ importers:
       '@layers/system':
         specifier: workspace:*
         version: link:layers/system
+      '@layers/zalo':
+        specifier: workspace:*
+        version: link:layers/zalo
       '@nuxt/a11y':
         specifier: 'catalog:'
         version: 1.0.0-alpha.1(magicast@0.5.2)(vite@7.3.1(@types/node@25.9.1)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
@@ -582,6 +585,8 @@ importers:
   layers/support: {}
 
   layers/system: {}
+
+  layers/zalo: {}
 
   packages/cli:
     dependencies:

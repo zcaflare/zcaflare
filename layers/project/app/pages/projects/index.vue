@@ -8,7 +8,7 @@ import { projectsKey } from '#layers/project/app/composables/useProjects'
 import DashboardNavbar from '~/components/Dashboard/DashboardNavbar.vue'
 
 definePageMeta({ can: ['project:read', 'project:write', 'project:manage'] })
-useHead({ title: 'Workspaces' })
+useHead({ title: 'Projects' })
 
 const api = useProjectApi()
 const toast = useToast()
@@ -56,7 +56,7 @@ async function handleSubmit(values: CreateProject | UpdateProject) {
     }
     await refresh()
     modalOpen.value = false
-    toast.add({ title: isEdit ? 'Workspace updated' : 'Workspace created', color: 'success' })
+    toast.add({ title: isEdit ? 'Project updated' : 'Project created', color: 'success' })
   }
   catch (err: unknown) {
     const e = err as { data?: { statusMessage?: string } }
@@ -83,7 +83,7 @@ async function deleteProject(id: string) {
 async function handleDelete(project: Project) {
   try {
     await deleteProject(project.id)
-    toast.add({ title: 'Workspace deleted', color: 'success' })
+    toast.add({ title: 'Project deleted', color: 'success' })
   }
   catch (err: unknown) {
     const e = err as { data?: { statusMessage?: string } }
@@ -95,9 +95,9 @@ async function handleDelete(project: Project) {
 <template>
   <UDashboardPanel id="projects">
     <template #header>
-      <DashboardNavbar title="Workspaces">
+      <DashboardNavbar title="Projects">
         <template #right>
-          <UButton icon="i-lucide-plus" label="New workspace" @click="openCreate()" />
+          <UButton icon="i-lucide-plus" label="New Project" @click="openCreate()" />
         </template>
       </DashboardNavbar>
     </template>
@@ -115,7 +115,7 @@ async function handleDelete(project: Project) {
 
   <UModal
     v-model:open="modalOpen"
-    :title="editingProject ? 'Edit workspace' : 'New workspace'"
+    :title="editingProject ? 'Edit Project' : 'New Project'"
   >
     <template #body>
       <ProjectForm

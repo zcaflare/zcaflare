@@ -1,6 +1,5 @@
-import { db } from '@nuxthub/db'
-import { projectMemberTable, projectTable } from '@nuxthub/db/schema'
 import { createError, readValidatedBody } from 'h3'
+import { createProject } from '#layers/project/server/services/project'
 import { CreateProjectSchema } from '#layers/project/shared/schemas/project'
 
 export default defineAuthorizedHandler(
@@ -12,18 +11,6 @@ export default defineAuthorizedHandler(
 
     const body = await readValidatedBody(event, CreateProjectSchema.parse)
 
-    const [project] = await db.insert(projectTable).values({
-      ...body,
-      organization_id: orgId,
-      created_by: session.sub,
-    }).returning()
-
-    await db.insert(projectMemberTable).values({
-      project_id: project!.id,
-      user_id: session.sub,
-      role: 'owner',
-    })
-
-    return project!
+    return createProject({ orgId, userId: session.sub, ...body })
   },
 )

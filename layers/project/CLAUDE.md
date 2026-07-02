@@ -16,7 +16,7 @@ the real-world container is:
 | If the adapted business is… | A "project" is… |
 |---|---|
 | A subscription SaaS | The user's subscription / account |
-| A team SaaS | A workspace / team / organization |
+| A team SaaS | A Project / team / organization |
 | A multi-tenant tool | A tenant |
 | Pay-as-you-go | The user's wallet (with credit packs attached) |
 | A storefront | A cart / order |
@@ -25,7 +25,7 @@ the real-world container is:
 Concretely, a project has:
 - A name, description, and status (`active | archived`)
 - **Attached products** — a many-to-many with `quantity` (e.g. "this
-  workspace uses 1 Pro plan + 3 Extra Seats")
+  Project uses 1 Pro plan + 3 Extra Seats")
 - **Members** — users with a role (`owner | member | viewer`)
 
 The owner pays. Members are granted access. Viewers see but don't edit.
@@ -57,8 +57,8 @@ actions, namespaced `Project/Project*.vue` components). See root
 ### Adapting "project" to your business
 
 Same as the product layer: only **user-facing labels** change.
-File/type/function/table names stay `project`. A workspace-based
-adaptation renders "Workspaces" in the sidebar but still writes
+File/type/function/table names stay `project`. A Project-based
+adaptation renders "Projects" in the sidebar but still writes
 `fetchProjects()` in code.
 
 ### Membership model

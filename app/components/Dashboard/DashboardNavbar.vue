@@ -10,7 +10,9 @@ const sortedNavbarItems = computed(() =>
 <template>
   <UDashboardNavbar :title="title">
     <template #leading>
-      <UDashboardSidebarCollapse />
+      <slot name="leading">
+        <UDashboardSidebarCollapse />
+      </slot>
     </template>
     <template #right>
       <slot name="right" />

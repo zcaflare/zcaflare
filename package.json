@@ -79,6 +79,7 @@
     "@layers/project": "workspace:*",
     "@layers/selfhost": "workspace:*",
     "@layers/system": "workspace:*",
+    "@layers/zalo": "workspace:*",
     "@nuxt/a11y": "catalog:",
     "@nuxt/eslint": "catalog:",
     "@nuxt/fonts": "catalog:",

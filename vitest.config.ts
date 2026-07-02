@@ -14,6 +14,7 @@ const layerAliases = [
   { find: /^#layers\/system\/(.+?)(\.ts|\.vue)?$/, replacement: `${ROOT}/layers/system/$1$2` },
   { find: /^#layers\/support\/(.+?)(\.ts|\.vue)?$/, replacement: `${ROOT}/layers/support/$1$2` },
   { find: /^#layers\/selfhost\/(.+?)(\.ts|\.vue)?$/, replacement: `${ROOT}/layers/selfhost/$1$2` },
+  { find: /^#layers\/zalo\/(.+?)(\.ts|\.vue)?$/, replacement: `${ROOT}/layers/zalo/$1$2` },
 ]
 
 const rootAliases = [
@@ -28,6 +29,10 @@ const hubMockAliases = [
   { find: '@nuxthub/kv', replacement: `${ROOT}/test/__mocks__/hub-kv.ts` },
   { find: '@nuxthub/db/schema', replacement: `${ROOT}/test/__mocks__/hub-db-schema.ts` },
   { find: '@nuxthub/db', replacement: `${ROOT}/test/__mocks__/hub-db.ts` },
+  // Nitro virtual modules — not available in node unit env
+  { find: '#imports', replacement: `${ROOT}/test/__mocks__/nitro-imports.ts` },
+  // ofetch is a transitive dep of Nuxt — stub it for node unit tests
+  { find: 'ofetch', replacement: `${ROOT}/test/__mocks__/ofetch.ts` },
 ]
 
 export default defineConfig({

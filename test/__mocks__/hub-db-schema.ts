@@ -21,6 +21,7 @@ export const supportTicketMessageTable = {} as any
 export const projectTable = {} as any
 export const projectMemberTable = {} as any
 export const projectProductTable = {} as any
+export const zaloWebhookTable = {} as any
 export enum ActivityAction {
   SIGN_IN = 'auth:sign_in',
   SIGN_UP = 'auth:sign_up',

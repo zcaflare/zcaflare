@@ -21,7 +21,7 @@ watch(selected, (v) => {
 </script>
 
 <template>
-  <UFormField v-if="options.length > 0" label="Workspaces">
+  <UFormField v-if="options.length > 0" label="Projects">
     <USelectMenu v-model="selected" :items="options" value-key="value" label-key="label" multiple placeholder="None" class="min-w-48" />
   </UFormField>
 </template>

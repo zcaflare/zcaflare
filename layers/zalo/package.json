@@ -1,0 +1,6 @@
+{
+  "name": "@layers/zalo",
+  "type": "module",
+  "private": true,
+  "main": "./nuxt.config.ts"
+}

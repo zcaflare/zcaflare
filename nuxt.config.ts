@@ -149,7 +149,7 @@ export default defineNuxtConfig({
       signIn: '/auth/login',
       callback: '/auth/callback',
       signOut: '/auth/logout',
-      home: '/dashboard',
+      home: '/',
       error: '/auth/error',
     },
   },
@@ -230,12 +230,25 @@ export default defineNuxtConfig({
     adminEmail: '',
     adminPassword: '',
 
+    // @thecodeorigin/auth reads the OIDC client secret from runtimeConfig.auth.
+    // The project's documented env names are NUXT_THECODEORIGIN_*, so map them
+    // into the keys the module actually consumes.
+    auth: {
+      clientSecret: process.env.NUXT_THECODEORIGIN_CLIENT_SECRET || '',
+    },
+
     public: {
       sslEnabled: false,
 
       baseDomain: 'localhost:3000',
 
       demoMode: false,
+
+      // @thecodeorigin/auth reads the public OIDC client id + issuer domain here.
+      auth: {
+        clientId: process.env.NUXT_THECODEORIGIN_CLIENT_ID || '',
+        domain: process.env.NUXT_THECODEORIGIN_DOMAIN || 'id.thecodeorigin.com',
+      },
     },
 
     // Bearer token guarding /api/cron/** (see server/utils/cron.ts).
@@ -245,6 +258,8 @@ export default defineNuxtConfig({
 
     githubRepository: '',
     githubToken: '',
+
+    bounceServerUrl: 'https://zca.thecodeorigin.com',
   },
 
   // Production-grade security applied uniformly across development,
