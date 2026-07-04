@@ -8,7 +8,7 @@ name: Preview
 #   1. Derive a slug from the branch name and create (idempotent) a per-branch D1.
 #   2. Build with that D1 id + the shared preview KV/CACHE/R2 ids from Doppler.
 #   3. Apply D1 migrations to the fresh per-branch database.
-#   4. Deploy a per-branch Worker (nuxt-template-<slug>) + sticky PR comment.
+#   4. Deploy a per-branch Worker (zcaflare-<slug>) + sticky PR comment.
 # On PR closed: delete the per-branch Worker and its D1 database.
 
 on:
@@ -31,7 +31,7 @@ jobs:
       pull-requests: write
     env:
       DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
-      DOPPLER_PROJECT: template
+      DOPPLER_PROJECT: zcaflare
       DOPPLER_CONFIG: prd
     steps:
       - uses: actions/checkout@v4
@@ -42,8 +42,8 @@ jobs:
         run: |
           SLUG=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//' | cut -c1-40 | sed -E 's/-+$//')
           echo "SLUG=$SLUG" >> "$GITHUB_ENV"
-          echo "DB_NAME=nuxt-template-preview-$SLUG" >> "$GITHUB_ENV"
-          echo "WORKER_NAME=nuxt-template-$SLUG" >> "$GITHUB_ENV"
+          echo "DB_NAME=zcaflare-preview-$SLUG" >> "$GITHUB_ENV"
+          echo "WORKER_NAME=zcaflare-$SLUG" >> "$GITHUB_ENV"
 
       - uses: pnpm/action-setup@v4
         with:
@@ -133,7 +133,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
-      DOPPLER_PROJECT: template
+      DOPPLER_PROJECT: zcaflare
       DOPPLER_CONFIG: prd
     steps:
       - name: Resolve resource names from branch
@@ -141,8 +141,8 @@ jobs:
           BRANCH: ${{ github.head_ref }}
         run: |
           SLUG=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//' | cut -c1-40 | sed -E 's/-+$//')
-          echo "DB_NAME=nuxt-template-preview-$SLUG" >> "$GITHUB_ENV"
-          echo "WORKER_NAME=nuxt-template-$SLUG" >> "$GITHUB_ENV"
+          echo "DB_NAME=zcaflare-preview-$SLUG" >> "$GITHUB_ENV"
+          echo "WORKER_NAME=zcaflare-$SLUG" >> "$GITHUB_ENV"
 
       - name: Install Doppler CLI
         uses: dopplerhq/cli-action@v3

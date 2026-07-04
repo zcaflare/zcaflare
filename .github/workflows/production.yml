@@ -1,8 +1,8 @@
 name: Deploy (Cloudflare Workers)
 
-# Deploys to https://template.thecodeorigin.com (Worker `nuxt-template`).
+# Deploys to https://zcaflare.thecodeorigin.com (Worker `zcaflare`).
 # The ONLY GitHub secret used is DOPPLER_TOKEN (a read-only Doppler service token
-# scoped to project=template, config=prd). Everything else — including the Cloudflare
+# scoped to project=zcaflare, config=prd). Everything else — including the Cloudflare
 # credentials and all NUXT_* runtime vars — is pulled from Doppler at run time.
 
 on:
@@ -20,12 +20,12 @@ jobs:
     timeout-minutes: 25
     environment:
       name: Production
-      url: https://template.thecodeorigin.com
+      url: https://zcaflare.thecodeorigin.com
     permissions:
       contents: write
     env:
       DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
-      DOPPLER_PROJECT: template
+      DOPPLER_PROJECT: zcaflare
       DOPPLER_CONFIG: prd
     steps:
       - uses: actions/checkout@v4

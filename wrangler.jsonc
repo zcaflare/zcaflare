@@ -21,6 +21,18 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
+  // Serve production traffic on the custom domain. `custom_domain: true` makes
+  // wrangler provision the DNS record + edge cert on deploy (the zone
+  // thecodeorigin.com lives in this Cloudflare account). NuxtHub merges this
+  // block into the generated .output/server/wrangler.json. Preview deploys
+  // override `--name` and get a *.workers.dev URL, so this route only binds to
+  // the canonical `zcaflare` worker.
+  "routes": [
+    {
+      "pattern": "zcaflare.thecodeorigin.com",
+      "custom_domain": true
+    }
+  ],
   "observability": {
     "logs": {
       "enabled": true,
