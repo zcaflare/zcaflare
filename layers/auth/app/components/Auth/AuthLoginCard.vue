@@ -7,8 +7,14 @@ const error = computed(() => {
   return typeof e === 'string' ? e : null
 })
 
+const loggedOut = computed(() => route.query.loggedout != null)
+
+function handleSignIn() {
+  signIn('/')
+}
+
 onMounted(() => {
-  if (!error.value)
+  if (!error.value && !loggedOut.value)
     void signIn('/')
 })
 </script>
@@ -22,7 +28,7 @@ onMounted(() => {
           Sign in
         </h1>
         <p class="text-sm text-muted">
-          You will be redirected to sign in.
+          {{ loggedOut ? 'Sign in to continue.' : 'You will be redirected to sign in.' }}
         </p>
       </div>
     </template>
@@ -40,9 +46,23 @@ onMounted(() => {
         size="lg"
         color="primary"
         icon="i-lucide-refresh-cw"
-        @click="signIn('/')"
+        @click="handleSignIn"
       >
         Try again
+      </UButton>
+    </div>
+    <div v-else-if="loggedOut" class="space-y-3">
+      <p class="text-sm text-muted text-center">
+        You've been signed out.
+      </p>
+      <UButton
+        block
+        size="lg"
+        color="primary"
+        icon="i-lucide-log-in"
+        @click="handleSignIn"
+      >
+        Sign in
       </UButton>
     </div>
     <div v-else class="flex justify-center py-4">

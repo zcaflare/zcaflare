@@ -22,7 +22,7 @@ async function logout() {
     await signOut()
   }
   finally {
-    await navigateTo('/auth/login')
+    await navigateTo({ path: '/auth/login', query: { loggedout: '1' } })
   }
 }
 
