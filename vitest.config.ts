@@ -67,7 +67,12 @@ export default defineConfig({
               domEnvironment: 'happy-dom',
             },
           },
-          hookTimeout: 120000,
+          // @nuxt/test-utils builds a real Nuxt app in the environment setup
+          // hook (per suite). A cold CI runner's build exceeds the previous
+          // 120s ceiling — the production build alone runs ~2.5min — so give
+          // the setup + first render generous headroom.
+          hookTimeout: 300000,
+          testTimeout: 60000,
         },
       }),
     ],
