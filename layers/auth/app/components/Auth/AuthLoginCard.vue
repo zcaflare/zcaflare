@@ -10,7 +10,7 @@ const error = computed(() => {
 const loggedOut = computed(() => route.query.loggedout != null)
 
 function handleSignIn() {
-  signIn('/')
+  signIn('/', loggedOut.value ? { prompt: 'select_account' } : undefined)
 }
 
 onMounted(() => {
