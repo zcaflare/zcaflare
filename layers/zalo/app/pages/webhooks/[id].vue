@@ -38,7 +38,25 @@ function copySecret() {
     </template>
 
     <template #body>
-      <div v-if="webhook" class="max-w-3xl mx-auto w-full space-y-6 p-4">
+      <div v-if="!webhook && error" class="max-w-3xl mx-auto w-full p-4">
+        <div class="flex flex-col items-center gap-4 rounded-lg border border-muted bg-elevated/50 px-6 py-16 text-center">
+          <UIcon name="i-lucide-lock" class="size-10 text-dimmed" />
+          <div class="space-y-1">
+            <p class="text-lg font-semibold text-default">
+              You don't have access to this webhook
+            </p>
+            <p class="text-sm text-muted">
+              It belongs to a different account. Sign in with the account that created it,
+              or create a new webhook from the homepage.
+            </p>
+          </div>
+          <UButton to="/" color="neutral" variant="solid" icon="i-lucide-arrow-left">
+            Back to home
+          </UButton>
+        </div>
+      </div>
+
+      <div v-else-if="webhook" class="max-w-3xl mx-auto w-full space-y-6 p-4">
         <UFormField label="Callback URL">
           <UInput :model-value="webhook.callbackUrl" readonly class="w-full" />
         </UFormField>
