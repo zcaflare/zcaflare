@@ -90,6 +90,10 @@ jobs:
       - name: Deploy per-branch Worker
         id: deploy
         run: |
+          # The shared wrangler.jsonc binds the production custom domain
+          # (zcaflare.thecodeorigin.com). A per-branch preview worker must never
+          # claim it, so strip `routes` from the generated config before deploy.
+          node -e "const f='.output/server/wrangler.json';const c=require('path').resolve(f);const j=require(c);delete j.routes;require('fs').writeFileSync(c,JSON.stringify(j,null,2))"
           out=$(npx --yes wrangler deploy --config .output/server/wrangler.json --name "$WORKER_NAME" 2>&1)
           echo "$out"
           url=$(echo "$out" | grep -oE 'https://[a-z0-9.-]+workers\.dev' | head -1)
