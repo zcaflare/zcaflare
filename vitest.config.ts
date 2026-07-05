@@ -67,6 +67,7 @@ export default defineConfig({
               domEnvironment: 'happy-dom',
             },
           },
+          setupFiles: ['./test/setup/nuxt-session-mock.ts'],
           hookTimeout: 120000,
         },
       }),
