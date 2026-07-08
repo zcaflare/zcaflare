@@ -71,10 +71,17 @@ export default defineNuxtConfig({
       },
       kv: {
         driver: 'cloudflare-kv-binding',
+        // REQUIRED: the unstorage cloudflare-kv-binding driver defaults to a
+        // binding named "STORAGE"; NuxtHub generates the binding as "KV". Without
+        // this the driver can't find the namespace → KV silently unusable and
+        // sessions never persist (blob below correctly sets binding; kv/cache
+        // were missing it).
+        binding: 'KV',
         namespaceId: process.env.CLOUDFLARE_KV_NAMESPACE_ID,
       },
       cache: {
         driver: 'cloudflare-kv-binding',
+        binding: 'CACHE',
         namespaceId: process.env.CLOUDFLARE_CACHE_NAMESPACE_ID,
       },
       blob: {
@@ -144,7 +151,11 @@ export default defineNuxtConfig({
 
   auth: {
     domain: 'id.thecodeorigin.com',
-    sessionStorageBase: 'hub:kv',
+    // Must be 'kv' (the Nitro storage mount NuxtHub creates at nitro.storage.kv →
+    // the Cloudflare KV binding), NOT 'hub:kv' — 'hub:kv' is only NuxtHub's import
+    // alias for @nuxthub/kv, not a storage mount, so useStorage('hub:kv') silently
+    // falls back to in-memory and sessions don't persist across worker isolates.
+    sessionStorageBase: 'kv',
     routes: {
       signIn: '/auth/login',
       callback: '/auth/callback',
