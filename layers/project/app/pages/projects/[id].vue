@@ -5,8 +5,8 @@ import { useProductApi } from '#layers/product/app/api/useProductApi'
 import { useProjectApi } from '#layers/project/app/api/useProjectApi'
 import DashboardNavbar from '~/components/Dashboard/DashboardNavbar.vue'
 
-definePageMeta({ can: ['project:read', 'project:write', 'project:manage'] })
-
+// Auth-required by default. No client ability gate (portal doesn't emit
+// app-specific `project:*` to non-admins; access is enforced server-side).
 const route = useRoute()
 const api = useProjectApi()
 const productApi = useProductApi()

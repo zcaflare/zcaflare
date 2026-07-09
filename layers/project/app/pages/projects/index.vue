@@ -7,7 +7,10 @@ import ProjectList from '#layers/project/app/components/Project/ProjectList.vue'
 import { projectsKey } from '#layers/project/app/composables/useProjects'
 import DashboardNavbar from '~/components/Dashboard/DashboardNavbar.vue'
 
-definePageMeta({ can: ['project:read', 'project:write', 'project:manage'] })
+// Auth-required by default. No client ability gate: the portal IdP doesn't emit
+// app-specific `project:*` abilities to non-admins, so a can-gate here would 403
+// every regular member while the "Projects" nav link is shown to them. Access is
+// enforced server-side.
 useHead({ title: 'Projects' })
 
 const api = useProjectApi()
