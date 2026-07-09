@@ -6,7 +6,7 @@ defineProps<{
 }>()
 
 const colorMode = useColorMode()
-const { user, isImpersonating, impersonator, signOut, stopImpersonating } = useAuth()
+const { user, isImpersonating, impersonator, stopImpersonating } = useAuth()
 const toast = useToast()
 
 const displayUser = computed(() => ({
@@ -18,12 +18,12 @@ const displayUser = computed(() => ({
 }))
 
 async function logout() {
-  try {
-    await signOut()
-  }
-  finally {
-    await navigateTo({ path: '/auth/login', query: { loggedout: '1' } })
-  }
+  // Sign out then HARD-navigate so the app tears down in one shot. Calling the
+  // module signOut() nulls the reactive session in place, which repaints the
+  // dashboard as a signed-out "Guest" for a frame before any redirect — the bug.
+  await $fetch('/api/_auth/sign-out', { method: 'POST' }).catch(() => {})
+  if (import.meta.client)
+    window.location.href = '/auth/login?loggedout=1'
 }
 
 async function handleStopImpersonation() {
