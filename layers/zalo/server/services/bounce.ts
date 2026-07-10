@@ -22,6 +22,7 @@ export type WizardPhase = 'pending' | 'authenticated' | 'expired'
 const LOGIN_TIMEOUT_MS = 25_000
 const STATUS_TIMEOUT_MS = 15_000
 const QR_TIMEOUT_MS = 10_000
+const ACTION_TIMEOUT_MS = 30_000
 
 // Matches the bounce server's actual status literals 1:1 (see
 // zcaflare/core server/utils/zalo.ts): pending -> scanned -> authenticated,
@@ -53,6 +54,32 @@ export async function getZaloStatus(sessionId: string, secret: string): Promise<
     headers: { 'x-webhook-secret': secret },
     signal: AbortSignal.timeout(STATUS_TIMEOUT_MS),
   })
+}
+
+export interface BounceActionResponse<T> {
+  ok: boolean
+  action: string
+  result: T
+}
+
+/**
+ * Invoke a single `zca-js` method on a live core session via the one-for-all
+ * endpoint (`POST /api/zalo/{sessionId}/action`). `payload` is the method's
+ * positional arguments; the resolved value is the method's return value.
+ */
+export async function callZaloAction<T = unknown>(
+  sessionId: string,
+  secret: string,
+  action: string,
+  payload: unknown[],
+): Promise<T> {
+  const res = await $fetch<BounceActionResponse<T>>(`${baseUrl()}/api/zalo/${sessionId}/action`, {
+    method: 'POST',
+    headers: { 'x-webhook-secret': secret },
+    body: { action, payload },
+    signal: AbortSignal.timeout(ACTION_TIMEOUT_MS),
+  })
+  return res.result
 }
 
 export async function normalizeQrToDataUrl(qrImage: string): Promise<string> {
