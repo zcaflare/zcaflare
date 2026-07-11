@@ -1,6 +1,23 @@
+/** A webhook the scanned Zalo account is already bound to. */
+export interface ZaloConflictInfo {
+  sessionId: string
+  callbackUrl: string
+  displayName: string | null
+}
+
 export interface ZaloStatusResult {
-  phase: 'pending' | 'authenticated' | 'expired'
+  phase: 'pending' | 'conflict' | 'authenticated' | 'expired'
   projectId?: string
+  conflicts?: ZaloConflictInfo[]
+}
+
+export interface ZaloConflictResult {
+  phase: 'authenticated'
+  /** True when the existing webhook was kept and this login was discarded. */
+  keptExisting: boolean
+  callbackUrl: string
+  /** Null when the kept webhook belongs to a project this user cannot see. */
+  projectId: string | null
 }
 
 export interface ZaloWebhookDetail {
@@ -27,5 +44,12 @@ export function useZaloApi() {
     return $http<ZaloWebhookDetail>(`/api/zalo/webhooks/${projectId}`)
   }
 
-  return { startLogin, fetchStatus, fetchWebhook }
+  function resolveConflict(sessionId: string, replace: boolean) {
+    return $http<ZaloConflictResult>(`/api/zalo/${sessionId}/conflict`, {
+      method: 'POST',
+      body: { replace },
+    })
+  }
+
+  return { startLogin, fetchStatus, fetchWebhook, resolveConflict }
 }

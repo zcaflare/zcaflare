@@ -20,3 +20,15 @@ export const ZaloLoginSchema = z.object({
 })
 
 export type ZaloLogin = z.infer<typeof ZaloLoginSchema>
+
+export const ZaloConflictSchema = z.object({
+  /**
+   * true  — this callback URL takes over the Zalo account; the session it
+   *         collided with is deleted and its receiver goes silent.
+   * false — that session keeps running, on its own URL and its own secret;
+   *         this login is discarded.
+   */
+  replace: z.boolean(),
+})
+
+export type ZaloConflict = z.infer<typeof ZaloConflictSchema>

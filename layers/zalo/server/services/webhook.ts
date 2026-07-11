@@ -1,9 +1,19 @@
 import type { ZaloWebhook } from '@nuxthub/db/schema'
 import { db } from '@nuxthub/db'
 import { projectMemberTable, zaloWebhookTable } from '@nuxthub/db/schema'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, inArray } from 'drizzle-orm'
 import { createError } from 'h3'
 import { decryptSecret, encryptSecret } from '~~/server/utils/crypto'
+
+/** A human label for the project a webhook lands in, taken from its host. */
+export function deriveProjectName(callbackUrl: string): string {
+  try {
+    return `Zalo · ${new URL(callbackUrl).host}`
+  }
+  catch {
+    return 'Zalo Webhook'
+  }
+}
 
 export interface CreateZaloWebhookInput {
   projectId: string
@@ -33,6 +43,28 @@ export async function findWebhookBySession(sessionId: string) {
   return db.query.zaloWebhookTable.findFirst({
     where: eq(zaloWebhookTable.session_id, sessionId),
   })
+}
+
+/**
+ * Forget the webhook records of sessions the bounce server has deleted. Their
+ * secrets authenticate nothing and their callback URLs will never be delivered
+ * to again, so a surviving row would only advertise a webhook that is silently
+ * dead.
+ */
+export async function deleteWebhooksBySessions(sessionIds: string[]): Promise<void> {
+  if (sessionIds.length === 0)
+    return
+  await db.delete(zaloWebhookTable).where(inArray(zaloWebhookTable.session_id, sessionIds))
+}
+
+export async function isProjectMember(projectId: string, userId: string): Promise<boolean> {
+  const membership = await db.query.projectMemberTable.findFirst({
+    where: and(
+      eq(projectMemberTable.project_id, projectId),
+      eq(projectMemberTable.user_id, userId),
+    ),
+  })
+  return Boolean(membership)
 }
 
 /**

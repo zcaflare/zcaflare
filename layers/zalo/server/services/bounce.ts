@@ -9,15 +9,34 @@ export interface BounceLoginResponse {
   qrImage: string
 }
 
+/** A session for the same Zalo account that this login would collide with. */
+export interface BounceConflict {
+  sessionId: string
+  callbackUrl: string
+  displayName: string | null
+  updatedAt: string
+}
+
 export interface BounceStatusResponse {
   ok: boolean
   session: {
     status: string
     error: string | null
   }
+  /** Present only while the session is parked in `conflict`. */
+  conflicts?: BounceConflict[]
 }
 
-export type WizardPhase = 'pending' | 'authenticated' | 'expired'
+export interface BounceConflictResolution {
+  ok: boolean
+  keptSessionId: string
+  callbackUrl: string
+  removedSessionIds: string[]
+  /** True when the pre-existing session was kept and this login was discarded. */
+  keptExisting: boolean
+}
+
+export type WizardPhase = 'pending' | 'conflict' | 'authenticated' | 'expired'
 
 const LOGIN_TIMEOUT_MS = 25_000
 const STATUS_TIMEOUT_MS = 15_000
@@ -36,6 +55,10 @@ function baseUrl(): string {
 export function phaseFromBounceStatus(status: string): WizardPhase {
   if (status === 'authenticated')
     return 'authenticated'
+  // Scanned successfully, but this Zalo account already has a session on another
+  // callback URL. It is not pending — nothing more will happen without a choice.
+  if (status === 'conflict')
+    return 'conflict'
   if (TERMINAL_EXPIRED.has(status))
     return 'expired'
   return 'pending'
@@ -80,6 +103,27 @@ export async function callZaloAction<T = unknown>(
     signal: AbortSignal.timeout(ACTION_TIMEOUT_MS),
   })
   return res.result
+}
+
+/**
+ * Settle a login parked in `conflict` on the bounce server.
+ *
+ * `replace: true` hands the Zalo account to this login's callback URL and
+ * deletes the session it collided with. `replace: false` leaves that session in
+ * place — same URL, same signing secret, its receiver none the wiser — and
+ * discards this login, whose sessionId and secret become void.
+ */
+export async function resolveZaloConflict(
+  sessionId: string,
+  secret: string,
+  replace: boolean,
+): Promise<BounceConflictResolution> {
+  return $fetch<BounceConflictResolution>(`${baseUrl()}/api/zalo/${sessionId}/conflict`, {
+    method: 'POST',
+    headers: { 'x-webhook-secret': secret },
+    body: { replace },
+    signal: AbortSignal.timeout(ACTION_TIMEOUT_MS),
+  })
 }
 
 export async function normalizeQrToDataUrl(qrImage: string): Promise<string> {
