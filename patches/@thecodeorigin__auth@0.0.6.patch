@@ -1,0 +1,22 @@
+diff --git a/dist/module.mjs b/dist/module.mjs
+index b1c0be501d43d3655d849a59bb7ff2a981e34056..fcb0f432f27faa6e1323aae07f13e35fb8bb8393 100644
+--- a/dist/module.mjs
++++ b/dist/module.mjs
+@@ -35,8 +35,15 @@ const module$1 = defineNuxtModule({
+       ["/api/_auth/impersonatable-users", "impersonatable-users.get"],
+       ["/api/_auth/impersonate", "impersonate.post"],
+       ["/api/_auth/stop-impersonating", "stop-impersonating.post"]
+-    ])
+-      addServerHandler({ route, handler: resolver.resolve(`./runtime/server/api/_auth/${file}`) });
++    ]) {
++      // Declare the method explicitly, in lowercase. Left off, Nitro derives it
++      // from the handler filename and keys the generated route type as `POST`,
++      // while typed $fetch looks methods up in lowercase — so every one of these
++      // routes types as accepting no method at all, and `$fetch(route, { method:
++      // 'POST' })` fails to compile against the module's own API.
++      const method = file.split("/").pop().split(".").pop();
++      addServerHandler({ route, method, handler: resolver.resolve(`./runtime/server/api/_auth/${file}`) });
++    }
+     addServerImportsDir(resolver.resolve("./runtime/server/utils"));
+     addImportsDir(resolver.resolve("./runtime/app/composables"));
+     addRouteMiddleware({ name: "auth", path: resolver.resolve("./runtime/app/middleware/auth.global"), global: true });

@@ -1,11 +1,10 @@
 shellEmulator: true
-
 trustPolicy: no-downgrade
-
 packages:
   - layers/**
   - packages/**
-
+patchedDependencies:
+  '@thecodeorigin/auth@0.0.6': patches/@thecodeorigin__auth@0.0.6.patch
 catalog:
   '@antfu/eslint-config': ^8.0.0
   '@casl/ability': ^6.8.1
