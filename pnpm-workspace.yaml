@@ -3,8 +3,6 @@ trustPolicy: no-downgrade
 packages:
   - layers/**
   - packages/**
-patchedDependencies:
-  '@thecodeorigin/auth@0.0.6': patches/@thecodeorigin__auth@0.0.6.patch
 catalog:
   '@antfu/eslint-config': ^8.0.0
   '@casl/ability': ^6.8.1
@@ -30,7 +28,7 @@ catalog:
   '@playwright/test': ^1.59.1
   '@tailwindcss/vite': ^4.2.2
   '@tanstack/vue-table': ^8.21.3
-  '@thecodeorigin/auth': 0.0.6
+  '@thecodeorigin/auth': 0.0.8
   '@tiptap/core': ^3.22.4
   '@tiptap/extension-bubble-menu': ^3.22.4
   '@tiptap/extension-code': ^3.22.4

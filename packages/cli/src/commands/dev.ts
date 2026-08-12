@@ -5,7 +5,7 @@ import { ensureEnvFile, writeEnvKeys } from '../lib/keys'
 import { printJson } from '../lib/output'
 import { killTree, spawnPkg } from '../lib/run'
 
-const urlArg = { type: 'string' as const, description: 'Dev server base URL', default: 'http://localhost:3002' }
+const urlArg = { type: 'string' as const, description: 'Dev server base URL', default: 'http://localhost:3004' }
 
 /** Split a stream chunk into complete lines, carrying any partial trailing line. */
 export function splitChunk(carry: string, chunk: string): { lines: string[], carry: string } {
@@ -19,9 +19,9 @@ const TRAILING_CR = /\r$/
 const up = defineCommand({
   meta: { name: 'up', description: 'Run nuxt dev + maildev together; stream both, kill both on exit' },
   args: {
-    port: { type: 'string', default: '3002', description: 'Nuxt dev port' },
-    smtp: { type: 'string', default: '1025', description: 'MailDev SMTP port' },
-    web: { type: 'string', default: '1080', description: 'MailDev web UI port' },
+    port: { type: 'string', default: '3004', description: 'Nuxt dev port' },
+    smtp: { type: 'string', default: '1028', description: 'MailDev SMTP port' },
+    web: { type: 'string', default: '1084', description: 'MailDev web UI port' },
   },
   run({ args }) {
     return new Promise<void>((resolve) => {
