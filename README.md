@@ -10,9 +10,9 @@
 
 ZcaFlare is Zalo Webhook as a service — a personal Zalo integration for
 developers. Built on a **full Cloudflare stack** (D1 SQLite · KV · R2 ·
-Workers) with **GitHub Actions deploys** baked in. PR → Cloudflare Workers
-preview. Merge to `main` → production ships. D1 migrations apply during each
-build.
+Workers) with **GitHub Actions deploys** baked in. Push to `development` → the
+stable Cloudflare preview Worker. Merge to `main` → production ships. D1
+migrations are applied before each deployment.
 
 > Deep version (conventions, layer ownership, hard rules):
 > [`CLAUDE.md`](./CLAUDE.md). CLI reference: [`packages/cli/README.md`](./packages/cli/README.md).
@@ -104,8 +104,13 @@ the values.
 | `NUXT_GITHUB_REPOSITORY` | manual | `owner/repo` — used by the self-host layer to fetch release bundles |
 | `NUXT_GITHUB_TOKEN` | manual | PAT for private-repo release downloads (optional) |
 | `NUXT_SEPAY_*` | manual | SePay bank-transfer payments (optional) |
-| `CLOUDFLARE_API_TOKEN` | manual | Required for `cli deploy setup` |
-| `CLOUDFLARE_ACCOUNT_ID` | manual | Required for `cli deploy setup` |
+| `DOPPLER_ENVIRONMENT` | Doppler | Preview: `dev`/`development`/`preview`/`stg`/`staging`; production: `prd`/`prod` |
+| `CLOUDFLARE_API_TOKEN` | Doppler | Cloudflare token used only by deployment steps |
+| `CLOUDFLARE_ACCOUNT_ID` | Doppler | Cloudflare account used only by deployment steps |
+| `CLOUDFLARE_D1_DATABASE_ID` | Doppler | Existing environment-specific D1 database ID |
+| `CLOUDFLARE_KV_NAMESPACE_ID` | Doppler | Existing application KV namespace ID |
+| `CLOUDFLARE_CACHE_NAMESPACE_ID` | Doppler | Existing cache KV namespace ID |
+| `CLOUDFLARE_R2_BUCKET` | Doppler | Existing R2 bucket name |
 
 Check what you have at any time:
 
@@ -116,62 +121,33 @@ pnpm cli doctor --json   # machine-readable; exit 1 if any check fails
 
 ---
 
-## Deploy (one-time setup, ~5 minutes)
+## Deploy
 
-You need a **GitHub** account and a **Cloudflare** account.
+GitHub Actions reads deployment configuration through two scoped Doppler
+service tokens. Do not add Cloudflare credentials or resource IDs directly to
+GitHub.
 
-### 1. Cloudflare API token + account id
+- `DOPPLER_TOKEN`: read-only service token scoped to production, where
+  `DOPPLER_ENVIRONMENT` is `prd` or `prod`.
+- `DOPPLER_PREVIEW_TOKEN`: read-only service token scoped to preview, where
+  `DOPPLER_ENVIRONMENT` is `dev`, `development`, `preview`, `stg`, or `staging`.
 
-Create a token at
-<https://dash.cloudflare.com/profile/api-tokens> with **Workers Scripts +
-D1 + Workers KV + R2 edit** (and `workers_observability` edit if you keep
-logging on). Grab the account id from **Workers & Pages → account id**.
+Both Doppler configs need `CLOUDFLARE_API_TOKEN`,
+`CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_D1_DATABASE_ID`,
+`CLOUDFLARE_KV_NAMESPACE_ID`, `CLOUDFLARE_CACHE_NAMESPACE_ID`, and
+`CLOUDFLARE_R2_BUCKET`. Application KV and cache KV must use different
+namespace IDs.
 
-Add both to your shell (or `.env`):
+The preview resources are created or selected manually and recorded in the
+preview Doppler config. Pushing `development` validates those bindings,
+migrates the preview D1 database, syncs only `NUXT_*` and `CRON_SECRET`, and
+deploys the stable `zcaflare-preview` Worker. The workflow never creates or
+deletes Cloudflare storage and removes production routes and schedules from the
+generated preview configuration.
 
-```bash
-export CLOUDFLARE_API_TOKEN=...
-export CLOUDFLARE_ACCOUNT_ID=...
-```
-
-### 2. GitHub CLI authenticated
-
-```bash
-gh auth login        # only needed once
-```
-
-### 3. One-shot provisioning
-
-```bash
-pnpm cli deploy setup --env all --dry-run    # preview the plan, mutate nothing
-pnpm cli deploy setup --env all              # do it
-```
-
-That single command:
-
-1. Verifies your Cloudflare token and GitHub auth.
-2. Resolves-or-creates the D1 database, KV namespaces, and R2 bucket (prod +
-   preview).
-3. Writes the resulting IDs to GitHub Actions **variables** (consumed at build).
-4. Sets `CLOUDFLARE_API_TOKEN` and `PREVIEW_NUXT_AUTH_SECRET` as GitHub
-   **secrets**.
-5. Bulk-pushes every `NUXT_*` / `CRON_SECRET` from your `.env` to the
-   production Worker as runtime secrets.
-
-> Want to manage Worker secrets via the Cloudflare dashboard instead? Pass
-> `--skip-worker-secrets`.
-
-### 4. Open a PR
-
-Push a branch, open a PR → the **Preview** workflow runs:
-
-- Builds with `NITRO_PRESET=cloudflare-module` and `CLOUDFLARE_ENV=preview`
-  (D1 migrations apply during the build).
-- Deploys to Cloudflare Workers (`wrangler deploy --env preview`).
-- Posts a sticky PR comment with the preview URL.
-
-Merging to `main` → the **Production** workflow builds (migrating D1) and runs
-`wrangler deploy`.
+Pushing `main` runs the production workflow. It accepts only `prd` or `prod`,
+then builds, migrates, deploys `zcaflare`, and syncs the same runtime-secret
+allowlist.
 
 ### Observe deploys
 
@@ -255,7 +231,7 @@ ability model, the deploy-pipeline tradeoffs — are in
 | `pnpm cli db sql "…"` | Ad-hoc SQL against the local D1 |
 | `pnpm cli db reset` | Wipe `.data/` and re-migrate |
 | `pnpm cli verify` | Local CI gate (lint → typecheck → test) |
-| `pnpm cli deploy setup --env all` | Provision CF resources + sync GH config + push Worker secrets |
+| `pnpm test:deploy` | Verify preview naming, Doppler guards, bindings, and secret filtering |
 | `pnpm cli deploy status` | Latest CI runs + Worker deployments |
 | `pnpm cli deploy logs` | Tail the production Worker |
 

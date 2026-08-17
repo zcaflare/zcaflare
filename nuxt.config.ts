@@ -54,15 +54,9 @@ export default defineNuxtConfig({
     image: {
       provider: 'cloudflare',
     },
-    // Production Cloudflare bindings. NuxtHub generates the wrangler binding
-    // config from this block at build time (wrangler.jsonc only carries the
-    // observability block). Cloudflare has no resource auto-association, so the
-    // resource IDs are injected from build-time env vars:
-    //   - prod: GitHub Actions variables (CLOUDFLARE_D1_DATABASE_ID,
-    //     CLOUDFLARE_KV_NAMESPACE_ID, CLOUDFLARE_CACHE_NAMESPACE_ID,
-    //     CLOUDFLARE_R2_BUCKET)
-    //   - preview: the preview workflow creates a per-PR D1 and passes its id in
-    // kv and cache MUST be separate KV namespaces.
+    // NuxtHub needs resource identities while generating the Wrangler config.
+    // Doppler provides production values; the stable-preview helper injects
+    // isolated values and rejects a shared KV/cache namespace.
     hub: {
       db: {
         dialect: 'sqlite',
