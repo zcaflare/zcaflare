@@ -1,49 +1,25 @@
-name: Preview
-
-# Preview pipeline: per-branch ephemeral D1 on Cloudflare Workers.
-# The ONLY GitHub secret used is DOPPLER_TOKEN. Cloudflare credentials and
-# resource IDs are pulled from Doppler at run time.
-#
-# On PR opened / reopened / synchronize:
-#   1. Derive a slug from the branch name and create (idempotent) a per-branch D1.
-#   2. Build with that D1 id + the shared preview KV/CACHE/R2 ids from Doppler.
-#   3. Apply D1 migrations to the fresh per-branch database.
-#   4. Deploy a per-branch Worker (zcaflare-<slug>) + sticky PR comment.
-# On PR closed: delete the per-branch Worker and its D1 database.
+name: Deploy Preview (development)
 
 on:
-  pull_request:
-    types: [opened, reopened, synchronize, closed]
+  push:
+    branches: [development]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
-  group: preview-${{ github.head_ref }}
+  group: deploy-zcaflare-preview
   cancel-in-progress: true
 
 jobs:
   deploy:
-    name: Build · deploy (preview)
-    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     environment:
       name: Preview
-    permissions:
-      contents: read
-      pull-requests: write
-    env:
-      DOPPLER_TOKEN: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
-      DOPPLER_PROJECT: zcaflare
-      DOPPLER_CONFIG: prd
     steps:
       - uses: actions/checkout@v4
-
-      - name: Resolve resource names from branch
-        env:
-          BRANCH: ${{ github.head_ref }}
-        run: |
-          SLUG=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//' | cut -c1-40 | sed -E 's/-+$//')
-          echo "SLUG=$SLUG" >> "$GITHUB_ENV"
-          echo "DB_NAME=zcaflare-preview-$SLUG" >> "$GITHUB_ENV"
-          echo "WORKER_NAME=zcaflare-$SLUG" >> "$GITHUB_ENV"
 
       - uses: pnpm/action-setup@v4
         with:
@@ -54,114 +30,24 @@ jobs:
           node-version: 22
           cache: pnpm
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
 
-      - name: Install Doppler CLI
-        uses: dopplerhq/cli-action@v3
+      - uses: dopplerhq/cli-action@v3
 
-      - name: Resolve Cloudflare credentials from Doppler
-        run: |
-          CF_TOKEN="$(doppler secrets get CLOUDFLARE_TOKEN --plain)"
-          CF_ACCOUNT="$(doppler secrets get CLOUDFLARE_ACCOUNT_ID --plain)"
-          echo "::add-mask::$CF_TOKEN"
-          echo "::add-mask::$CF_ACCOUNT"
-          echo "CLOUDFLARE_API_TOKEN=$CF_TOKEN" >> "$GITHUB_ENV"
-          echo "CLOUDFLARE_ACCOUNT_ID=$CF_ACCOUNT" >> "$GITHUB_ENV"
-
-      - name: Create / resolve per-branch D1 database
-        id: d1
-        run: |
-          npx --yes wrangler d1 create "$DB_NAME" || echo "D1 exists, reusing"
-          DB_ID=$(npx --yes wrangler d1 info "$DB_NAME" --json | jq -r '.uuid')
-          test -n "$DB_ID" && echo "id=$DB_ID" >> "$GITHUB_OUTPUT"
-
-      - name: Build (cloudflare_module, preview)
-        run: |
-          CLOUDFLARE_D1_DATABASE_ID="${{ steps.d1.outputs.id }}" \
-          CLOUDFLARE_KV_NAMESPACE_ID="$(doppler secrets get CLOUDFLARE_PREVIEW_KV_NAMESPACE_ID --plain)" \
-          CLOUDFLARE_CACHE_NAMESPACE_ID="$(doppler secrets get CLOUDFLARE_PREVIEW_CACHE_NAMESPACE_ID --plain)" \
-          CLOUDFLARE_R2_BUCKET="$(doppler secrets get CLOUDFLARE_PREVIEW_R2_BUCKET --plain)" \
-          pnpm build
-
-      - name: Apply D1 migrations to the per-branch database
-        run: npx --yes wrangler d1 migrations apply DB --remote --config .output/server/wrangler.json
-
-      - name: Deploy per-branch Worker
-        id: deploy
-        run: |
-          # The shared wrangler.jsonc binds the production custom domain
-          # (zcaflare.thecodeorigin.com). A per-branch preview worker must never
-          # claim it, so strip `routes` from the generated config before deploy.
-          node -e "const f='.output/server/wrangler.json';const c=require('path').resolve(f);const j=require(c);delete j.routes;require('fs').writeFileSync(c,JSON.stringify(j,null,2))"
-          out=$(npx --yes wrangler deploy --config .output/server/wrangler.json --name "$WORKER_NAME" 2>&1)
-          echo "$out"
-          url=$(echo "$out" | grep -oE 'https://[a-z0-9.-]+workers\.dev' | head -1)
-          echo "url=$url" >> "$GITHUB_OUTPUT"
-
-      - name: Provision preview Worker secrets
-        run: |
-          NUXT_AUTH_SECRET="$(doppler secrets get NUXT_AUTH_SECRET --plain)"
-          cat > "$RUNNER_TEMP/preview-secrets.json" <<EOF
-          {
-            "NUXT_AUTH_SECRET": "${NUXT_AUTH_SECRET}",
-            "NUXT_PUBLIC_DEMO_MODE": "true"
-          }
-          EOF
-          npx --yes wrangler secret bulk "$RUNNER_TEMP/preview-secrets.json" --name "$WORKER_NAME"
-          rm -f "$RUNNER_TEMP/preview-secrets.json"
-
-      - name: Sticky PR comment
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const url = '${{ steps.deploy.outputs.url }}'
-            const sha = '${{ github.event.pull_request.head.sha }}'.slice(0, 7)
-            const body = [
-              '**Preview ready (Cloudflare Workers)**',
-              '',
-              url ? `- URL: ${url}` : `- Worker: \`${{ env.WORKER_NAME }}\``,
-              `- D1: \`${{ env.DB_NAME }}\` (ephemeral, migrated)`,
-              `- Commit: \`${sha}\``,
-            ].join('\n')
-            const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number })
-            const existing = comments.find(c => c.user.type === 'Bot' && c.body && c.body.includes('Preview ready'))
-            if (existing)
-              await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: existing.id, body })
-            else
-              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body })
-
-  cleanup:
-    name: Tear down preview
-    if: github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    env:
-      DOPPLER_TOKEN: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
-      DOPPLER_PROJECT: zcaflare
-      DOPPLER_CONFIG: prd
-    steps:
-      - name: Resolve resource names from branch
+      - name: Assert preview Doppler environment
         env:
-          BRANCH: ${{ github.head_ref }}
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
         run: |
-          SLUG=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//' | cut -c1-40 | sed -E 's/-+$//')
-          echo "DB_NAME=zcaflare-preview-$SLUG" >> "$GITHUB_ENV"
-          echo "WORKER_NAME=zcaflare-$SLUG" >> "$GITHUB_ENV"
+          test -n "$DOPPLER_TOKEN" || { echo "::error::Missing DOPPLER_PREVIEW_TOKEN"; exit 1; }
+          resolved_env="$(doppler secrets get DOPPLER_ENVIRONMENT --plain | tr '[:upper:]' '[:lower:]' | xargs)"
+          case "$resolved_env" in
+            dev|development|preview|stg|staging) ;;
+            *) echo "::error::DOPPLER_PREVIEW_TOKEN resolved to '$resolved_env'; expected dev, development, preview, stg, or staging"; exit 1 ;;
+          esac
 
-      - name: Install Doppler CLI
-        uses: dopplerhq/cli-action@v3
-
-      - name: Resolve Cloudflare credentials from Doppler
+      - name: Validate bindings · build · migrate · sync secrets · deploy
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
         run: |
-          CF_TOKEN="$(doppler secrets get CLOUDFLARE_TOKEN --plain)"
-          CF_ACCOUNT="$(doppler secrets get CLOUDFLARE_ACCOUNT_ID --plain)"
-          echo "::add-mask::$CF_TOKEN"
-          echo "::add-mask::$CF_ACCOUNT"
-          echo "CLOUDFLARE_API_TOKEN=$CF_TOKEN" >> "$GITHUB_ENV"
-          echo "CLOUDFLARE_ACCOUNT_ID=$CF_ACCOUNT" >> "$GITHUB_ENV"
-
-      - name: Delete per-branch Worker
-        run: npx --yes wrangler delete "$WORKER_NAME" --force || true
-
-      - name: Delete per-branch D1 database
-        run: npx --yes wrangler d1 delete "$DB_NAME" -y || true
+          test -n "$DOPPLER_TOKEN" || { echo "::error::Missing DOPPLER_PREVIEW_TOKEN"; exit 1; }
+          node .github/scripts/cloudflare-preview.mjs deploy .github/deploy.preview.json

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "slug": "zcaflare",
+  "worker": "zcaflare-preview",
+  "resources": ["d1", "kv", "cache", "r2"],
+  "runtimeSecretPatterns": ["^NUXT_", "^CRON_SECRET$"],
+  "buildCommand": ["pnpm", "build"],
+  "wranglerConfig": ".output/server/wrangler.json"
+}

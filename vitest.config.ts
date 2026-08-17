@@ -45,6 +45,7 @@ export default defineConfig({
         test: {
           name: 'unit',
           include: [
+            '.github/scripts/*.test.mjs',
             'test/unit/**/*.{test,spec}.ts',
             'layers/*/test/unit/**/*.{test,spec}.ts',
             'packages/*/test/unit/**/*.{test,spec}.ts',
