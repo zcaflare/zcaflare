@@ -157,7 +157,8 @@ export default defineNuxtConfig({
     // falls back to in-memory and sessions don't persist across worker isolates.
     sessionStorageBase: 'kv',
     routes: {
-      signIn: '/auth/login',
+      login: '/auth/login',
+      signIn: '/auth/sign-in',
       callback: '/auth/callback',
       signOut: '/auth/logout',
       home: '/',
