@@ -158,7 +158,7 @@ export default defineNuxtConfig({
     sessionStorageBase: 'kv',
     routes: {
       login: '/auth/login',
-      signIn: '/api/auth/sign-in',
+      signIn: '/auth/sign-in',
       callback: '/auth/callback',
       signOut: '/auth/logout',
       home: '/',
