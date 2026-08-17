@@ -1,4 +1,4 @@
-# ZcaFlare — Zalo Webhook as a service
+# ZcaFlare — Zalo Webhook as a service --
 
 [![CI](https://github.com/thecodeorigin/nuxt-template/actions/workflows/ci.yml/badge.svg)](https://github.com/thecodeorigin/nuxt-template/actions/workflows/ci.yml)
 [![Production](https://github.com/thecodeorigin/nuxt-template/actions/workflows/production.yml/badge.svg)](https://github.com/thecodeorigin/nuxt-template/actions/workflows/production.yml)
