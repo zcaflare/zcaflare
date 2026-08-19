@@ -2,7 +2,7 @@
 
 > Pinia is for **globally shared, long-lived data only**. The session is the
 > textbook example — the sidebar, navbar, route guards, CASL plugin, and
-> dashboard cards all read it.
+> application pages all read it.
 
 ## What lives here
 
