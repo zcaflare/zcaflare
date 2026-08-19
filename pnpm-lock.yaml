@@ -79,8 +79,8 @@ catalogs:
       specifier: ^8.21.3
       version: 8.21.3
     '@thecodeorigin/auth':
-      specifier: 0.0.6
-      version: 0.0.6
+      specifier: 0.0.8
+      version: 0.0.8
     '@tiptap/core':
       specifier: ^3.22.4
       version: 3.22.4
@@ -277,11 +277,6 @@ catalogs:
       specifier: ^4.3.6
       version: 4.3.6
 
-patchedDependencies:
-  '@thecodeorigin/auth@0.0.6':
-    hash: b6091e93cbcc23930cae71e146361519613f586758196c19824f627bec64d145
-    path: patches/@thecodeorigin__auth@0.0.6.patch
-
 importers:
 
   .:
@@ -312,7 +307,7 @@ importers:
         version: 8.21.3(vue@3.5.32(typescript@6.0.2))
       '@thecodeorigin/auth':
         specifier: 'catalog:'
-        version: 0.0.6(patch_hash=b6091e93cbcc23930cae71e146361519613f586758196c19824f627bec64d145)(magicast@0.5.2)(vue@3.5.32(typescript@6.0.2))
+        version: 0.0.8(magicast@0.5.2)(vue@3.5.32(typescript@6.0.2))
       '@tiptap/core':
         specifier: 'catalog:'
         version: 3.22.4(@tiptap/pm@3.22.4)
@@ -3446,8 +3441,8 @@ packages:
     peerDependencies:
       vue: ^2.7.0 || ^3.0.0
 
-  '@thecodeorigin/auth@0.0.6':
-    resolution: {integrity: sha512-H6SMJPWflWAnpOYEmUWIU8TixgfjhVdD22V6BeSUL1FsvR1sEfEqYerGY8H+g8tzXIvuwjNw33a+jndV6F1V3g==}
+  '@thecodeorigin/auth@0.0.8':
+    resolution: {integrity: sha512-8W9LuZFsni2jVRJiQf+1TfKCCj83Wj04kQ3WSyZO4MgVIvNzZSRsyhyniE5CUSv2YzokHTz+aV1T81sKxAV8vA==}
 
   '@tiptap/core@3.22.4':
     resolution: {integrity: sha512-vGIGm/HpqLg8EAAQXQ+koV+/S828OEpzocfWcPOwo1u2QUVf9dQG47Yy6JJ8zFFaJwfv4dBcOXli+7BrJwsxDQ==}
@@ -10724,7 +10719,7 @@ snapshots:
       scule: 1.3.0
       semver: 7.7.4
       tinyglobby: 0.2.16
-      ufo: 1.6.3
+      ufo: 1.6.4
       unctx: 2.5.0
       untyped: 2.0.0
     transitivePeerDependencies:
@@ -11996,7 +11991,7 @@ snapshots:
       '@tanstack/virtual-core': 3.14.0
       vue: 3.5.32(typescript@6.0.2)
 
-  '@thecodeorigin/auth@0.0.6(patch_hash=b6091e93cbcc23930cae71e146361519613f586758196c19824f627bec64d145)(magicast@0.5.2)(vue@3.5.32(typescript@6.0.2))':
+  '@thecodeorigin/auth@0.0.8(magicast@0.5.2)(vue@3.5.32(typescript@6.0.2))':
     dependencies:
       '@casl/ability': 6.8.1
       '@casl/vue': 2.2.6(@casl/ability@6.8.1)(vue@3.5.32(typescript@6.0.2))
