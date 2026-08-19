@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ZaloLoginSchema } from '#layers/zalo/shared/schemas/zalo'
+import { ZaloLoginSchema, ZaloProjectParamsSchema } from '#layers/zalo/shared/schemas/zalo'
 
 describe('zaloLoginSchema.callbackUrl', () => {
   it('accepts a public https URL', () => {
@@ -18,5 +18,16 @@ describe('zaloLoginSchema.callbackUrl', () => {
     ['not a url', 'not-a-url'],
   ])('rejects %s', (_label, callbackUrl) => {
     expect(() => ZaloLoginSchema.parse({ callbackUrl })).toThrow()
+  })
+})
+
+describe('zaloProjectParamsSchema', () => {
+  it('accepts UUID project ids', () => {
+    expect(ZaloProjectParamsSchema.parse({ id: 'c20038ec-31db-4e4f-ac21-c56f4eaffb42' }))
+      .toEqual({ id: 'c20038ec-31db-4e4f-ac21-c56f4eaffb42' })
+  })
+
+  it('rejects malformed project ids', () => {
+    expect(() => ZaloProjectParamsSchema.parse({ id: 'not-a-project' })).toThrow()
   })
 })

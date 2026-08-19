@@ -28,6 +28,17 @@ export interface ZaloWebhookDetail {
   createdAt: string
 }
 
+export interface ZaloProjectDetail {
+  id: string
+  name: string
+  description: string | null
+  status: 'active' | 'archived'
+  callbackUrl: string
+  sessionId: string
+  connectedAt: string
+  updatedAt: string | null
+}
+
 export function useZaloApi() {
   function startLogin(callbackUrl: string) {
     return $http<{ sessionId: string, qrDataUrl: string, status: string }>('/api/zalo/login', {
@@ -51,5 +62,17 @@ export function useZaloApi() {
     })
   }
 
-  return { startLogin, fetchStatus, fetchWebhook, resolveConflict }
+  function listProjects() {
+    return $http<ZaloProjectDetail[]>('/api/zalo/projects')
+  }
+
+  function fetchProject(id: string) {
+    return $http<ZaloProjectDetail>(`/api/zalo/projects/${id}`)
+  }
+
+  function revealProjectSecret(id: string) {
+    return $http<{ secret: string }>(`/api/zalo/projects/${id}/reveal-secret`, { method: 'POST' })
+  }
+
+  return { startLogin, fetchStatus, fetchWebhook, resolveConflict, listProjects, fetchProject, revealProjectSecret }
 }

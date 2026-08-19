@@ -1,11 +1,7 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<{ secret?: string }>(), { secret: '' })
+const verifySnippet = `import { createHmac, timingSafeEqual } from 'node:crypto'
 
-const secretValue = computed(() => props.secret || '<YOUR_WEBHOOK_SECRET>')
-
-const verifySnippet = computed(() => `import { createHmac, timingSafeEqual } from 'node:crypto'
-
-const WEBHOOK_SECRET = '${secretValue.value}'
+const WEBHOOK_SECRET = process.env.ZALO_WEBHOOK_SECRET ?? '<YOUR_WEBHOOK_SECRET>'
 
 // Verify every request before trusting its payload.
 function verify(rawBody, headers) {
@@ -15,7 +11,7 @@ function verify(rawBody, headers) {
   const a = Buffer.from(headers['x-zalo-signature'] || '')
   const b = Buffer.from(expected)
   return a.length === b.length && timingSafeEqual(a, b)
-}`)
+}`
 
 const { copy, copied } = useClipboard({ source: verifySnippet })
 
@@ -73,10 +69,6 @@ const steps = [
         />
         <pre class="overflow-x-auto rounded-lg border border-muted bg-elevated p-4 text-xs text-default"><code>{{ verifySnippet }}</code></pre>
       </div>
-
-      <p v-if="!secret" class="text-xs text-muted mt-2">
-        Your real signing secret appears here once you finish signing in with Zalo.
-      </p>
     </div>
   </div>
 </template>

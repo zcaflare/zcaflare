@@ -21,6 +21,10 @@ export const ZaloLoginSchema = z.object({
 
 export type ZaloLogin = z.infer<typeof ZaloLoginSchema>
 
+export const ZaloProjectParamsSchema = z.object({
+  id: z.string().uuid(),
+})
+
 export const ZaloConflictSchema = z.object({
   /**
    * true  — this callback URL takes over the Zalo account; the session it

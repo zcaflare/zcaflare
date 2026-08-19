@@ -1,7 +1,7 @@
 import type { ZaloWebhook } from '@nuxthub/db/schema'
 import { db } from '@nuxthub/db'
-import { projectMemberTable, zaloWebhookTable } from '@nuxthub/db/schema'
-import { and, eq, inArray } from 'drizzle-orm'
+import { projectMemberTable, projectTable, zaloWebhookTable } from '@nuxthub/db/schema'
+import { and, desc, eq, inArray } from 'drizzle-orm'
 import { createError } from 'h3'
 import { decryptSecret, encryptSecret } from '~~/server/utils/crypto'
 
@@ -118,4 +118,65 @@ export async function revealWebhookForUser(projectId: string, userId: string) {
     webhookSecret,
     createdAt: wh.created_at,
   }
+}
+
+const zaloProjectSelection = {
+  id: projectTable.id,
+  name: projectTable.name,
+  description: projectTable.description,
+  status: projectTable.status,
+  callbackUrl: zaloWebhookTable.callback_url,
+  sessionId: zaloWebhookTable.session_id,
+  connectedAt: zaloWebhookTable.created_at,
+  updatedAt: zaloWebhookTable.updated_at,
+}
+
+export function listZaloProjectsForUser(orgId: string, userId: string) {
+  return db.select(zaloProjectSelection)
+    .from(zaloWebhookTable)
+    .innerJoin(projectTable, eq(projectTable.id, zaloWebhookTable.project_id))
+    .innerJoin(projectMemberTable, and(
+      eq(projectMemberTable.project_id, projectTable.id),
+      eq(projectMemberTable.user_id, userId),
+    ))
+    .where(and(
+      eq(projectTable.organization_id, orgId),
+      eq(projectTable.status, 'active'),
+    ))
+    .orderBy(desc(zaloWebhookTable.created_at))
+}
+
+export async function findZaloProjectForUser(projectId: string, orgId: string, userId: string) {
+  const [record] = await db.select(zaloProjectSelection)
+    .from(zaloWebhookTable)
+    .innerJoin(projectTable, eq(projectTable.id, zaloWebhookTable.project_id))
+    .innerJoin(projectMemberTable, and(
+      eq(projectMemberTable.project_id, projectTable.id),
+      eq(projectMemberTable.user_id, userId),
+    ))
+    .where(and(
+      eq(projectTable.id, projectId),
+      eq(projectTable.organization_id, orgId),
+    ))
+    .limit(1)
+  return record ?? null
+}
+
+export async function revealWebhookSecretForUser(projectId: string, orgId: string, userId: string) {
+  const [record] = await db.select({
+    ciphertext: zaloWebhookTable.secret_ciphertext,
+    iv: zaloWebhookTable.secret_iv,
+  })
+    .from(zaloWebhookTable)
+    .innerJoin(projectTable, eq(projectTable.id, zaloWebhookTable.project_id))
+    .innerJoin(projectMemberTable, and(
+      eq(projectMemberTable.project_id, projectTable.id),
+      eq(projectMemberTable.user_id, userId),
+    ))
+    .where(and(
+      eq(projectTable.id, projectId),
+      eq(projectTable.organization_id, orgId),
+    ))
+    .limit(1)
+  return record ? decryptSecret(record) : null
 }

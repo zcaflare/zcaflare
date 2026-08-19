@@ -172,8 +172,8 @@ function copy() {
       </UFormField>
 
       <div class="flex gap-2">
-        <UButton v-if="w.projectId.value" :to="`/webhooks/${w.projectId.value}`" icon="i-lucide-arrow-right" trailing>
-          Open webhook
+        <UButton v-if="w.projectId.value" :to="`/projects/${w.projectId.value}`" icon="i-lucide-arrow-right" trailing>
+          Open project
         </UButton>
         <UButton color="neutral" variant="ghost" @click="w.reset()">
           Create another
