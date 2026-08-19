@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ZaloProjectDetail } from '#layers/zalo/app/api/useZaloApi'
 import { useZaloApi } from '#layers/zalo/app/api/useZaloApi'
+import ZaloReauthenticate from './ZaloReauthenticate.vue'
 import ZaloWebhookDocs from './ZaloWebhookDocs.vue'
 
 const props = defineProps<{ project: ZaloProjectDetail }>()
@@ -11,6 +12,7 @@ const { copy, copied } = useClipboard()
 const secret = ref('')
 const visible = ref(false)
 const loadingSecret = ref(false)
+const reauthenticateOpen = ref(false)
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' })
 const connectedAt = computed(() => dateFormatter.format(new Date(props.project.connectedAt)))
@@ -65,13 +67,23 @@ onBeforeUnmount(clearSecret)
   <div class="space-y-6">
     <UCard>
       <template #header>
-        <div>
-          <h2 class="font-semibold text-highlighted">
-            Webhook configuration
-          </h2>
-          <p class="mt-1 text-sm text-muted">
-            Use these values to receive and verify events from this Zalo session.
-          </p>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h2 class="font-semibold text-highlighted">
+              Webhook configuration
+            </h2>
+            <p class="mt-1 text-sm text-muted">
+              Use these values to receive and verify events from this Zalo session.
+            </p>
+          </div>
+          <UButton
+            color="neutral"
+            variant="outline"
+            icon="i-simple-icons-zalo"
+            @click="reauthenticateOpen = true"
+          >
+            Re-authenticate with Zalo
+          </UButton>
         </div>
       </template>
 
@@ -137,5 +149,19 @@ onBeforeUnmount(clearSecret)
 
     <USeparator />
     <ZaloWebhookDocs />
+
+    <UModal
+      v-model:open="reauthenticateOpen"
+      title="Re-authenticate with Zalo"
+      description="Refresh the Zalo login without changing this webhook."
+    >
+      <template #body>
+        <ZaloReauthenticate
+          :callback-url="project.callbackUrl"
+          :session-id="project.sessionId"
+          @close="reauthenticateOpen = false"
+        />
+      </template>
+    </UModal>
   </div>
 </template>

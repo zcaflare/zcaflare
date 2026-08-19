@@ -6,11 +6,16 @@ type Phase = 'callback' | 'scanning' | 'conflict' | 'done' | 'error'
 const POLL_INTERVAL_MS = 2500
 const MAX_ATTEMPTS = 120
 
-export function useZaloWizard() {
+interface ZaloWizardOptions {
+  callbackUrl?: string
+  preserveSessionId?: string
+}
+
+export function useZaloWizard(options: ZaloWizardOptions = {}) {
   const api = useZaloApi()
 
   const phase = ref<Phase>('callback')
-  const callbackUrl = ref('')
+  const callbackUrl = ref(options.callbackUrl ?? '')
   const qrDataUrl = ref('')
   const sessionId = ref('')
   const projectId = ref('')
@@ -80,6 +85,15 @@ export function useZaloWizard() {
       if (res.phase === 'conflict') {
         stop()
         conflicts.value = res.conflicts ?? []
+        if (options.preserveSessionId) {
+          const matchesProject = conflicts.value.some(conflict => conflict.sessionId === options.preserveSessionId)
+          await resolveConflict(false)
+          if (!matchesProject) {
+            errorMessage.value = 'That Zalo account is connected to a different project. Its existing webhook was restored; this project was not changed.'
+            phase.value = 'error'
+          }
+          return
+        }
         phase.value = 'conflict'
         return
       }
