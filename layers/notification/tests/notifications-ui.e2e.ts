@@ -11,7 +11,7 @@ test.beforeEach(async ({ context, request, baseURL }) => {
 })
 
 test('bell opens slideover and Load more appends', async ({ page, goto }) => {
-  await goto('/dashboard', { waitUntil: 'hydration' })
+  await goto('/', { waitUntil: 'hydration' })
   await page.getByTestId('notifications-bell').click()
   await expect(page.getByRole('heading', { name: 'Notifications' })).toBeVisible()
   await expect(page.getByText('Jordan Brown')).toBeVisible()

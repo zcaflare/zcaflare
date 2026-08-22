@@ -117,7 +117,7 @@ members routes). Create/list/revoke live under
 
 The public landing page is `app/pages/join/[token].vue`
 (`definePageMeta({ public: true })`); after a successful accept it routes to
-`/dashboard`. The client wrappers (`createInvitation`, `fetchInvitations`,
+`/`. The client wrappers (`createInvitation`, `fetchInvitations`,
 `revokeInvitation`, `fetchInvitation`, `acceptInvitation`) and the
 `OrgInvitation` type live in `app/api/useOrganizationApi.ts`; the page-scoped
 `invitations` ref + actions are provided via `app/composables/useOrganizationMembers.ts`.

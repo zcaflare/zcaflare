@@ -42,14 +42,14 @@ async function run() {
     }
   })
 
-  // ─── Step 1: Navigate to /dashboard ───────────────────────────────────────
+  // ─── Step 1: Navigate to home ────────────────────────────────────────────
   try {
-    const dashResp = await page.goto(`${BASE}/dashboard`, { waitUntil: 'networkidle', timeout: 15000 })
+    const homeResp = await page.goto(BASE, { waitUntil: 'networkidle', timeout: 15000 })
     const finalUrl = page.url()
     await page.screenshot({ path: `${SS_DIR}/01-initial-redirect.png`, fullPage: false })
-    log('Step 1: Navigate /dashboard', 'PASS', `HTTP ${dashResp?.status()} → final URL: ${finalUrl}`)
+    log('Step 1: Navigate home', 'PASS', `HTTP ${homeResp?.status()} → final URL: ${finalUrl}`)
   } catch (e) {
-    log('Step 1: Navigate /dashboard', 'FAIL', String(e))
+    log('Step 1: Navigate home', 'FAIL', String(e))
   }
 
   // ─── Step 2: Confirm redirect to /auth/login ──────────────────────────────
@@ -108,7 +108,7 @@ async function run() {
 
         const afterLoginUrl = page.url()
         // Check if still on sign-in or redirected
-        if (!afterLoginUrl.includes('/sign-in') || afterLoginUrl.includes('callback') || afterLoginUrl.includes('dashboard')) {
+        if (!afterLoginUrl.includes('/sign-in') || afterLoginUrl.includes('callback') || afterLoginUrl === `${BASE}/`) {
           log(`Step 4: Password attempt "${pw}"`, 'PASS', `URL changed to: ${afterLoginUrl}`)
           loginSucceeded = true
           break
@@ -132,7 +132,7 @@ async function run() {
   // ─── Step 5: PKCE callback ────────────────────────────────────────────────
   try {
     const callbackUrl = page.url()
-    if (callbackUrl.includes('localhost:3002/auth/callback') || callbackUrl.includes('localhost:3002/dashboard')) {
+    if (callbackUrl.includes('localhost:3002/auth/callback') || callbackUrl === `${BASE}/`) {
       log('Step 5: PKCE callback', 'PASS', `URL: ${callbackUrl}`)
     } else if (loginSucceeded) {
       // Navigate flow may have completed — check current URL
@@ -145,31 +145,31 @@ async function run() {
     log('Step 5: PKCE callback', 'FAIL', String(e))
   }
 
-  // ─── Step 6: Dashboard verification ──────────────────────────────────────
+  // ─── Step 6: Home verification ───────────────────────────────────────────
   try {
     const currentUrl = page.url()
     if (currentUrl.includes('localhost:3002')) {
-      if (!currentUrl.includes('/dashboard')) {
-        await page.goto(`${BASE}/dashboard`, { waitUntil: 'networkidle', timeout: 15000 })
+      if (currentUrl !== `${BASE}/`) {
+        await page.goto(BASE, { waitUntil: 'networkidle', timeout: 15000 })
       }
 
       const finalUrl = page.url()
-      await page.screenshot({ path: `${SS_DIR}/06-dashboard.png`, fullPage: true })
+      await page.screenshot({ path: `${SS_DIR}/06-home.png`, fullPage: true })
 
-      if (finalUrl.includes('/dashboard')) {
+      if (finalUrl === `${BASE}/`) {
         // Check for user info
         const pageContent = await page.content()
         const hasEmail = pageContent.includes('nguyenhuunguyeny') || pageContent.includes('Nguyen') || pageContent.includes('nguyen')
-        log('Step 6: Dashboard renders', 'PASS', `URL: ${finalUrl}`)
+        log('Step 6: Home renders', 'PASS', `URL: ${finalUrl}`)
         log('Step 6: User info visible', hasEmail ? 'PASS' : 'WARN', hasEmail ? 'Email/name found in page' : 'Email/name not found in page')
       } else {
-        log('Step 6: Dashboard', 'FAIL', `Redirected away from dashboard to: ${finalUrl}`)
+        log('Step 6: Home', 'FAIL', `Redirected away from home to: ${finalUrl}`)
       }
     } else {
-      log('Step 6: Dashboard', 'SKIP', 'Not on localhost:3002')
+      log('Step 6: Home', 'SKIP', 'Not on localhost:3002')
     }
   } catch (e) {
-    log('Step 6: Dashboard', 'FAIL', String(e))
+    log('Step 6: Home', 'FAIL', String(e))
   }
 
   // ─── Step 7: Session API ──────────────────────────────────────────────────

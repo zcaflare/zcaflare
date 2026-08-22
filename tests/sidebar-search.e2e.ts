@@ -11,7 +11,7 @@ test.beforeEach(async ({ context, request, baseURL }) => {
 })
 
 test('Ctrl+K opens the command palette with Go to + Theme groups', async ({ page, goto }) => {
-  await goto('/dashboard', { waitUntil: 'hydration' })
+  await goto('/', { waitUntil: 'hydration' })
   await page.keyboard.press('Control+k')
   await expect(page.getByPlaceholder(SEARCH_PLACEHOLDER)).toBeVisible()
   await expect(page.getByText('Go to')).toBeVisible()

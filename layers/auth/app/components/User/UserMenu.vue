@@ -20,7 +20,7 @@ const displayUser = computed(() => ({
 async function logout() {
   // Sign out then HARD-navigate so the app tears down in one shot. Calling the
   // module signOut() nulls the reactive session in place, which repaints the
-  // dashboard as a signed-out "Guest" for a frame before any redirect — the bug.
+  // app shell as a signed-out "Guest" for a frame before any redirect — the bug.
   await $fetch('/api/_auth/sign-out', { method: 'POST' }).catch(() => {})
   if (import.meta.client)
     window.location.href = '/auth/login?loggedout=1'

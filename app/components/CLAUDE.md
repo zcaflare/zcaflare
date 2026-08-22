@@ -1,8 +1,8 @@
 # app/components
 
-> Cross-cutting Vue components only. The dashboard shell is the textbook
-> example — the dashboard pages are the project's home, but the cards inside
-> them read from any layer (auth's `useAuthStore`, etc.). Anything
+> Cross-cutting Vue components only. The application shell is the textbook
+> example — shared navigation can consume contributions from any layer.
+> Anything
 > feature-scoped goes in that feature's layer.
 
 ## Components are NOT auto-imported
@@ -14,11 +14,11 @@ auto-imported because `@nuxt/ui` registers them through the module API.
 
 ```vue
 <script setup lang="ts">
-import DashboardSessionCard from '~/components/Dashboard/DashboardSessionCard.vue'
+import DashboardNavbar from '~/components/Dashboard/DashboardNavbar.vue'
 </script>
 
 <template>
-  <DashboardSessionCard />
+  <DashboardNavbar title="Home" />
 </template>
 ```
 
@@ -33,8 +33,7 @@ Each filename **starts with its parent folder's name**.
 
 | Path | Default-imported as |
 |------|---------------------|
-| `Dashboard/DashboardSessionCard.vue` | `DashboardSessionCard` |
-| `Dashboard/DashboardGettingStarted.vue` | `DashboardGettingStarted` |
+| `Dashboard/DashboardNavbar.vue` | `DashboardNavbar` |
 
 Add a new namespace folder for a new cross-cutting component group; for
 feature components, add them to the feature's layer instead. The full

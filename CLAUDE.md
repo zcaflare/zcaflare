@@ -187,9 +187,9 @@ app/                  Cross-cutting Nuxt frontend (project srcDir)
   assets/css/         main.css imports tailwindcss + @nuxt/ui + CSS-var overrides
   layouts/default.vue UDashboardGroup + sidebar shell (consumes layer
                       components: <ImpersonateMenu>, <UserMenu>)
-  pages/              Cross-cutting pages: index.vue, dashboard.vue
+  pages/              Cross-cutting pages: index.vue
   components/
-    Dashboard/        DashboardSessionCard, DashboardGettingStarted
+    Dashboard/        DashboardNavbar
   lib/                Auto-imported via nuxt.config — cross-cutting helpers
                       ONLY (cn, $http). No business logic.
   types/utils.d.ts    Generic TS helpers (ExtractResponse)
