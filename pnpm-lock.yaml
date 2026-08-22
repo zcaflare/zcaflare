@@ -1,3 +1,24 @@
+---
+lockfileVersion: '9.0'
+
+importers:
+
+  .:
+    configDependencies:
+      '@thecodeorigin/pnpm-plugin-shared':
+        specifier: 1.1.1
+        version: 1.1.1
+
+packages:
+
+  '@thecodeorigin/pnpm-plugin-shared@1.1.1':
+    resolution: {integrity: sha512-NQreSpaRRRvDfaBd/LLTm0XE1wWIjL24e0jDU69OelWKGUPaF5UFB4vHGDwEYOB+A3dReEPWX3jcC4cn3YYqsQ==}
+
+snapshots:
+
+  '@thecodeorigin/pnpm-plugin-shared@1.1.1': {}
+
+---
 lockfileVersion: '9.0'
 
 settings:
@@ -281,6 +302,8 @@ catalogs:
       version: 4.3.6
 
 packageExtensionsChecksum: sha256-knLfAgOGmC5Qw7apVL/QwZrvjW63N8IlHjJqu+a2ZkY=
+
+pnpmfileChecksum: sha256-RBdzUPNQV6Eax9ZnUg+vffWvA4KK7masmrdp+SpoMUM=
 
 importers:
 
